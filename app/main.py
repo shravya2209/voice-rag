@@ -22,10 +22,10 @@ log = get_logger("main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup: load models and index once. Shutdown: cleanup."""
+    """Startup: load FAISS index once. Heavy ML components are lazy-loaded on demand to preserve RAM."""
     settings = get_settings()
     log.info("=" * 60)
-    log.info("Voice-RAG starting up...")
+    log.info("Voice-RAG starting up (512MB RAM low-memory mode)...")
     log.info(f"  Embedding model : {settings.embedding_model}")
     log.info(f"  LLM provider    : {settings.llm_provider}")
     log.info(f"  Retrieval mode  : {settings.retrieval_mode}")
@@ -34,11 +34,7 @@ async def lifespan(app: FastAPI):
     log.info(f"  Top-K           : {settings.top_k}")
     log.info("=" * 60)
 
-    # ── Load embedding model (warmup) ──────────────────────────
-    embedder = Embedder.get_instance()
-    embedder.warmup()
-
-    # ── Load FAISS index ───────────────────────────────────────
+    # ── Load FAISS index (fast & lightweight, ~15MB) ───────────
     store = FAISSVectorStore.get_instance()
     try:
         store.load()
@@ -49,12 +45,9 @@ async def lifespan(app: FastAPI):
             "API will return errors for queries until index is built."
         )
 
-    # ── Build BM25 index if hybrid mode ────────────────────────
-    if settings.retrieval_mode in ("hybrid", "bm25") and store.is_loaded:
-        retriever = HybridRetriever(vector_store=store, embedder=embedder)
-        retriever.ensure_bm25()
-
-    log.info("Startup complete!")
+    # Note: Embedder model and BM25 index are lazy-loaded on the first query
+    # to avoid OOM memory spikes during Render container startup health checks.
+    log.info("Startup complete! Ready to receive traffic.")
     yield
     log.info("Shutting down...")
 
