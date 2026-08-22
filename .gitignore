@@ -1,0 +1,44 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data (raw/large files)
+data/passages.jsonl
+data/records.jsonl
+# Note: indexes/ is intentionally committed for deployment
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Models cache
+.cache/
+
+# Evaluation results (regenerated)
+evaluation/latency_results.json

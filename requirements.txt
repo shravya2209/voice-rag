@@ -1,0 +1,27 @@
+# Core
+fastapi==0.115.12
+uvicorn[standard]==0.34.3
+pydantic==2.11.4
+pydantic-settings==2.9.1
+httpx==0.28.1
+python-multipart==0.0.20
+
+# ML / Embeddings
+sentence-transformers==3.4.1
+numpy>=1.24.0,<2.0.0
+faiss-cpu==1.11.0
+rank-bm25==0.2.2
+
+# Dataset
+datasets==3.6.0
+huggingface-hub>=0.20.0
+
+# LLM (Gemini via REST — no SDK needed, httpx handles it)
+# For OpenAI: openai>=1.0.0 (optional)
+
+# Testing
+pytest==8.3.5
+pytest-asyncio==0.25.3
+
+# Utilities
+python-dotenv==1.1.0
